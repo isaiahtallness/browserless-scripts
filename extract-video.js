@@ -1,10 +1,11 @@
 module.exports = async ({ page, context }) => {
-  let videoUrl = null;
+  const requests = [];
 
   page.on('request', request => {
     const url = request.url();
+    requests.push(url);
     if (url.endsWith('.mp4') || url.includes('.m3u8')) {
-      videoUrl = url;
+      console.log('🎯 Found video URL:', url);
     }
   });
 
@@ -13,10 +14,10 @@ module.exports = async ({ page, context }) => {
   try {
     await page.click('video');
   } catch (err) {
-    console.log("Could not click video:", err.message);
+    console.log('⚠️ Could not click video:', err.message);
   }
 
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(10000);
 
-  return { videoUrl };
+  return { requests };
 };
